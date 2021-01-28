@@ -1,0 +1,1 @@
+drop table tag_in_articles;
