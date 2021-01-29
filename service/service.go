@@ -16,7 +16,7 @@ func NewService(r repo.Repo) *AppService {
 	}
 }
 
-func (s *AppService) GetTags() (*restapi.ResponsePayload, error) { //из service к repo
+func (s *AppService) GetTags() (*restapi.ResponsePayload, error) {
 	res, err := s.repo.GetTags()
 	if err != nil {
 		return nil, err
@@ -32,27 +32,36 @@ func (s *AppService) GetTags() (*restapi.ResponsePayload, error) { //из servic
 	}, nil
 }
 
-func (s *AppService) GetArticles() *[]model.Article {
-	res := s.repo.GetArticles()
-	return res
+func (s *AppService) GetArticles() (*restapi.ResponsePayload, error) {
+	res, err := s.repo.GetArticles()
+	if err != nil {
+		return nil, err
+	}
+	return &restapi.ResponsePayload{
+		Data: res,
+	}, nil
 }
 
-func (s *AppService) GetArticleBySlug(param string) *model.Article {
-	res := s.repo.GetArticleBySlug(param)
-	return res
+func (s *AppService) GetArticleBySlug(param string) (*model.Article, error) {
+	return s.repo.GetArticleBySlug(param)
 }
 
-func (s *AppService) CreateArticle(params *model.Article) *model.Article {
+func (s *AppService) CreateArticle(params *restapi.ArticleRequestPayload) (*model.Article, error) {
 	return s.repo.CreateArticle(params)
 }
 
-func (s *AppService) UpdateArticle(slug string, params *model.Article) *model.Article {
-	params.Slug = slug
-	res := s.repo.UpdateArticle(slug, params)
-	return res
+func (s *AppService) UpdateArticle(slug string, params *restapi.ArticleRequestPayload) (*model.Article, error) {
+	return s.repo.UpdateArticle(slug, params)
 }
 
-func (s *AppService) DeleteArticle(param string) bool {
-	res := s.repo.DeleteArticle(param)
-	return res
+func (s *AppService) DeleteArticle(param string) (bool, error) {
+	return s.repo.DeleteArticle(param)
+}
+
+func (s *AppService) CreateAuthor(params *restapi.AuthorRequestPayload) (*model.Author, error) {
+	return s.repo.CreateAuthor(params)
+}
+
+func (s *AppService) GetAuthorByName(param string) (*model.Author, error) {
+	return s.repo.GetAuthorByName(param)
 }

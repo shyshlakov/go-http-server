@@ -23,6 +23,10 @@ func NewAppServer(h *handler.HandlerRoutes, cfg *config.Config) *appServer {
 	httpSrv.Post("/api/articles", h.CreateArticle)
 	httpSrv.Put("/api/articles/:slug", h.UpdateArticle)
 	httpSrv.Delete("/api/articles/:slug", h.Delete)
+
+	httpSrv.Post("/api/authors", h.CreateAuthor)
+	httpSrv.Get("/api/authors/:name", h.GetAuthorByName)
+
 	return &appServer{ //& - получить ссылку от объекта
 		httpSrv: httpSrv,
 		h:       h,
