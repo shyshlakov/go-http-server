@@ -110,8 +110,13 @@ func (h *HandlerRoutes) Delete(ctx *fiber.Ctx) error {
 		})
 	}
 
-	h.s.DeleteArticle(param)
-	return ctx.Status(fiber.StatusAccepted).JSON(nil)
+	res, err := h.s.DeleteArticle(param)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": fmt.Sprintf("Cannot delete article by slug: %v", err),
+		})
+	}
+	return ctx.Status(fiber.StatusAccepted).JSON(res)
 }
 
 //Authors
