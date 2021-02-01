@@ -8,29 +8,30 @@ type Tag struct {
 }
 
 type Article struct { //responsePayload
-	ID             string   `json:"id"`
-	CreatedAt      string   `json:"created_at"`
-	UpdatedAt      string   `json:"updated_at"`
-	Slug           string   `json:"slug"`
-	Title          string   `json:"title"`
-	Description    string   `json:"description"`
-	Body           string   `json:"body"`
-	TagList        []string `json:"tag_list"`
-	Favorited      bool     `json:"favorited"`
-	FavoritesCount int      `json:"favorites_count"`
+	ID             string `json:"id"`
+	CreatedAt      string `json:"created_at"`
+	UpdatedAt      string `json:"updated_at"`
+	Slug           string `json:"slug"`
+	Title          string `json:"title"`
+	Description    string `json:"description"`
+	Body           string `json:"body"`
+	TagList        []*Tag `json:"tag_list"`
+	Favorited      bool   `json:"favorited"`
+	FavoritesCount int    `json:"favorites_count"`
 	//Comment        map[string]interface{} `json:"comment"`
 	Score      float64  `json:"score"`
 	LikedUsers []string `json:"liked_users"`
 	Author     Author   `json:"author"`
 }
 
-type ArticleRequestPayload struct {
-	Slug           string `pg:"slug"`
-	Title          string `pg:"title"`
-	Description    string `pg:"description"`
-	Body           string `pg:"body"`
-	Favorited      bool   `pg:"favorited"`
-	FavoritesCount int    `pg:"favorites_count"`
+type ArticleRequestPayload struct { //
+	Slug           string   `pg:"slug"`
+	Title          string   `pg:"title"`
+	Description    string   `pg:"description"`
+	Body           string   `pg:"body"`
+	Favorited      bool     `pg:"favorited"`
+	FavoritesCount int      `pg:"favorites_count"`
+	TagList        []string `pg:"many2many:tag_in_articles"`
 	//Comment        map[string]interface{} `pg:"comment"`
 	Score      float64  `pg:"score"`
 	LikedUsers []string `pg:"liked_users"`

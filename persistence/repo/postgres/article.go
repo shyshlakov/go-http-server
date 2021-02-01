@@ -29,7 +29,14 @@ func (r *postgreRepo) CreateArticle(params *restapi.ArticleRequestPayload) (*mod
 	if _, err := r.db.Model(dst).Insert(); err != nil {
 		return nil, err
 	}
-	return dst, nil
+	if _, err := r.CreateTagInArticle(params.TagList, dst.ID); err != nil {
+		return nil, err
+	}
+	res, err := r.GetArticleBySlug(params.Slug)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *postgreRepo) UpdateArticle(slug string, params *restapi.ArticleRequestPayload) (*model.Article, error) {
@@ -56,12 +63,23 @@ func (r *postgreRepo) UpdateArticle(slug string, params *restapi.ArticleRequestP
 	if _, err := r.db.Model(dst).Where("slug = ?", slug).Update(); err != nil {
 		return nil, err
 	}
-	return dst, nil
+
+	if _, err := r.DeleteTagInArticleByArticle(dst.ID); err != nil {
+		return nil, err
+	}
+	if _, err := r.CreateTagInArticle(params.TagList, dst.ID); err != nil {
+		return nil, err
+	}
+	res, err := r.GetArticleBySlug(params.Slug)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *postgreRepo) GetArticleBySlug(param string) (*model.Article, error) {
 	dst := model.Article{}
-	err := r.db.Model(&dst).Where("slug = ?", param).Limit(1).Relation("Author").Select()
+	err := r.db.Model(&dst).Where("slug = ?", param).Limit(1).Relation("Author").Relation("TagList").Select()
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +96,7 @@ func (r *postgreRepo) DeleteArticle(param string) (bool, error) {
 
 func (r *postgreRepo) GetArticles() ([]model.Article, error) {
 	dst := []model.Article{}
-	err := r.db.Model(&dst).Relation("Author").Select()
+	err := r.db.Model(&dst).Relation("Author").Relation("TagList").Select()
 	if err != nil {
 		return nil, err
 	}
