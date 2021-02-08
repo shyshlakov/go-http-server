@@ -20,6 +20,7 @@ type Config struct {
 	PostgresMaxOpenConns    int           `env:"POSTGRES_MAX_OPEN_CONNS" envDefault:"10"`
 	PostgresMaxIdleConns    int           `env:"POSTGRES_MAX_IDLE_CONNS" envDefault:"3"`
 	PostgresMaxConnLifetime time.Duration `env:"POSTGRES_MAX_CONN_LIFETIME" envDefault:"10s"`
+	MigrationVersion        uint          `env:"MIGRATION_VERSION" envDefault:"2"`
 }
 
 func FromEnv() (*Config, error) {

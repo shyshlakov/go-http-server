@@ -21,7 +21,9 @@ func NewServerRoutes(s *service.AppService) *HandlerRoutes {
 func (h *HandlerRoutes) GetTags(ctx *fiber.Ctx) error {
 	res, err := h.s.GetTags()
 	if err != nil {
-		return err
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": fmt.Sprintf("Cannot get tags: %v", err),
+		})
 	}
 	return ctx.Status(fiber.StatusOK).JSON(res)
 }
@@ -36,7 +38,7 @@ func (h *HandlerRoutes) GetArticles(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *HandlerRoutes) GetArticleBySlug(ctx *fiber.Ctx) error {
+func (h *HandlerRoutes) GetArticleBySlug(ctx *fiber.Ctx, slug string) error {
 	param := ctx.Params("slug")
 	if param == "idiot" {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -74,7 +76,7 @@ func (h *HandlerRoutes) CreateArticle(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(resPl)
 }
 
-func (h *HandlerRoutes) UpdateArticle(ctx *fiber.Ctx) error {
+func (h *HandlerRoutes) UpdateArticle(ctx *fiber.Ctx, slug string) error {
 	param := ctx.Params("slug")
 	body := &restapi.ArticleRequestPayload{}
 	err := ctx.BodyParser(body)
@@ -102,7 +104,7 @@ func (h *HandlerRoutes) UpdateArticle(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusAccepted).JSON(resPl)
 }
 
-func (h *HandlerRoutes) Delete(ctx *fiber.Ctx) error {
+func (h *HandlerRoutes) Delete(ctx *fiber.Ctx, slug string) error {
 	param := ctx.Params("slug")
 	if param == "idiot" {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -140,7 +142,7 @@ func (h *HandlerRoutes) CreateAuthor(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(resPl)
 }
 
-func (h *HandlerRoutes) GetAuthorByName(ctx *fiber.Ctx) error {
+func (h *HandlerRoutes) GetAuthorByName(ctx *fiber.Ctx, name string) error {
 	param := ctx.Params("name")
 	res, err := h.s.GetAuthorByName(param)
 	if err != nil {

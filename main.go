@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,11 +10,16 @@ import (
 	"github.com/shyshlakov/go-http-server/config"
 	"github.com/shyshlakov/go-http-server/handler"
 	"github.com/shyshlakov/go-http-server/persistence/repo/postgres"
+	"github.com/shyshlakov/go-http-server/restapi"
 	"github.com/shyshlakov/go-http-server/server"
 	"github.com/shyshlakov/go-http-server/service"
 )
 
 func main() {
+	swagger, err := restapi.GetSwagger()
+	if err != nil {
+		log.Fatal("Can not get swagger spec for api")
+	}
 	cfg, err := config.FromEnv()
 	if err != nil {
 		fmt.Printf("Can not get env: %v", err)
@@ -31,7 +37,7 @@ func main() {
 	}()
 	service := service.NewService(repo)
 	handler := handler.NewServerRoutes(service)
-	serv := server.NewAppServer(handler, cfg)
+	serv := server.NewAppServer(handler, cfg, swagger)
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh,
 		syscall.SIGTERM,

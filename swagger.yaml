@@ -1,0 +1,295 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Realization of Real World API
+paths:
+  /tags:
+    get:
+      description: "Tag endpoint"
+      operationId: GetTags
+      parameters: []
+      responses:
+        '200':
+          description: tags response
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties: 
+                  data:
+                    type: "array"
+                    items:
+                      type: "string"
+        "400":
+          description: "Can not get tags"
+  /articles:
+    get:
+      description: ""
+      operationId: GetArticles
+      parameters: []
+      responses:
+        '200':
+          description: articles response
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/ArticleRequest"
+        "400":
+          description: "Can not get articles"
+    post:
+      description: "Create an article"
+      operationId: CreateArticle
+      requestBody:
+        description: Pet to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleRequest'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/ArticleResponse"
+        "400":
+          description: "Can not get articles"
+  /articles/{slug}:
+    get:
+      description: "Find article by slug"
+      operationId: "GetArticleBySlug"
+      parameters: 
+        - in: "path"
+          name: "slug"
+          description: "slug of article to return"
+          schema:
+            type: "string"
+          required: true
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArticleResponse"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "If slug equals 'idiot'"
+    put:
+      summary: "Updates an article"
+      description: ""
+      operationId: "UpdateArticle"
+      parameters:
+      - name: "slug"
+        in: "path"
+        description: "slug of article that needs to be updated"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        description: Pet to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleRequest'
+      responses:
+        "201":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArticleResponse"
+        "500":
+          description: "Server error"
+        "404":
+          description: "If slug equals 'idiot'"
+    delete:
+      summary: "Deletes an article"
+      description: ""
+      operationId: "Delete"
+      parameters:
+      - name: "slug"
+        in: "path"
+        description: "Slug string to delete"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "202":
+          description: "success"
+        "500":
+          description: "server error"
+        "404":
+          description: "If slug equals 'idiot'"
+  /authors:
+    post:
+      summary: "Create an author"
+      description: ""
+      operationId: "CreateAuthor"
+      requestBody:
+        description: Pet to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorRequest'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/AuthorResponse"
+        "500":
+          description: "Can not create author"
+  /authors/{name}:
+    get:
+      summary: "Find article by slug"
+      description: "Returns a single article"
+      operationId: "GetAuthorByName"
+      parameters: 
+        - in: "path"
+          name: "name"
+          description: "name of author to return"
+          schema:
+            type: "string"
+          required: true
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorResponse"
+        "500":
+          description: "server error"
+components:
+  schemas:
+    TagResponse:
+      type: "object"
+      properties:
+        ID:
+          type: "string"
+        CreatedAt:
+          type: "string"
+          format: "date-time"
+        UpdatedAt:
+          type: "string"
+          format: "date-time"
+        Name:
+          type: "string"
+    AuthorResponse:
+      type: "object"
+      properties:
+        ID:
+          type: "string"
+        CreatedAt:
+          type: "string"
+          format: "date-time"
+        UpdatedAt:
+          type: "string"
+          format: "date-time"
+        Name: 
+          type: "string"
+        RegisterOn:
+          type: "string"
+          format: "date-time"
+        Image:
+          type: "string"
+    AuthorRequest:
+      type: "object"
+      properties:
+        name: 
+          type: "string"
+        registerOn:
+          type: "string"
+          format: "date-time"
+        image:
+          type: "string"
+    ArticleResponse:
+      type: "object"
+      properties:
+        ID:
+          type: "string"
+        CreatedAt:
+          type: "string"
+          format: "date-time"
+        UpdatedAt:
+          type: "string"
+          format: "date-time"
+        Slug:
+          type: "string"
+        Title:
+          type: "string"
+        Description:
+          type: "string"
+        Body:
+          type: "string"
+        TagList:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TagResponse"
+        Favorited:
+          type: "string"
+        FavoritesCount:
+          type: "integer"
+        Score:
+          type: "number"
+          format: "float"
+        LikedUsers:
+          type: "array"
+          items:
+            type: "string"
+        AuthorID:
+          type: "string"
+        Author:
+          $ref: "#/components/schemas/AuthorResponse"
+    ArticleRequest:
+      type: "object"
+      properties:
+        slug:
+          type: "string"
+        title:
+          type: "string"
+        description:
+          type: "string"
+        body:
+          type: "string"
+        tagList:
+          type: "array"
+          items:
+            type: "string"
+        favorited:
+          type: "boolean"
+        favoritesCount:
+          type: "integer"
+        score:
+          type: "number"
+          format: "float"
+        likedUsers:
+          type: "array"
+          items:
+            type: "string"
+        authorId:
+          type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
